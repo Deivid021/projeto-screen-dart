@@ -16,19 +16,19 @@ class LayoutTutorialScreen extends StatelessWidget {
           children: [
             const ImageSection(image: 'assets/images/lake.jpg'),
             const TitleSection(
-              name: 'Oeschinen Lake Campground',
-              location: 'Kandersteg, Switzerland',
+              name: 'Acampamento do Lago Oeschinen',
+              location: 'Kandersteg, Suíça',
             ),
             const ButtonSection(),
             const TextSection(
               description:
-                  'Lake Oeschinen lies at the foot of the Blüemlisalp in the '
-                  'Bernese Alps. Situated 1,578 meters above sea level, it '
-                  'is one of the larger alpine Lakes. A gondola ride from '
-                  'Kandersteg, followed by a half-hour walk through pastures '
-                  'and pine forest, leads you to the lake, which warms to '
-                  ' 20 degrees Celsius in the summer. Activities enjoyed here '
-                  'include rowing, and riding the summer toboggan run.',
+                  'O Lago Oeschinen fica ao pé do Blüemlisalp, nos Alpes '
+                  'Berneses. A 1.578 metros de altitude, é um dos maiores '
+                  'lagos alpinos da região. Um passeio de teleférico saindo '
+                  'de Kandersteg, seguido de meia hora de caminhada por '
+                  'pastos e floresta de pinheiros, leva até o lago, que '
+                  'chega a 20 graus no verão. As atividades mais comuns por '
+                  'lá são remo e um tobogã de verão.',
             ),
           ],
         ),
@@ -153,9 +153,9 @@ class ButtonSection extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ButtonWithText(color: color, icon: Icons.call, label: 'CALL'),
-        ButtonWithText(color: color, icon: Icons.near_me, label: 'ROUTE'),
-        ButtonWithText(color: color, icon: Icons.share, label: 'SHARE'),
+        ButtonWithText(color: color, icon: Icons.call, label: 'LIGAR'),
+        ButtonWithText(color: color, icon: Icons.near_me, label: 'ROTA'),
+        ButtonWithText(color: color, icon: Icons.share, label: 'COMPARTILHAR'),
       ],
     );
   }
