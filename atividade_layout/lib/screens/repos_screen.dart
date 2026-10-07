@@ -101,10 +101,12 @@ class _ReposScreenState extends State<ReposScreen> {
                     title: Text(repo.name),
                     subtitle: Text(repo.description),
                     trailing: Column(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(repo.language),
                         Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.star, size: 14, color: Colors.amber),
                             Text(' ${repo.stars}'),
