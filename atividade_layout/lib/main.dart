@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'screens/cookbook_fetch_data_screen.dart';
 import 'screens/layout_tutorial_screen.dart';
+import 'screens/repos_screen.dart';
 
 void main() {
   runApp(const AtividadeApp());
@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const CookbookFetchDataScreen(),
+                      builder: (_) => const ReposScreen(),
                     ),
                   );
                 },
