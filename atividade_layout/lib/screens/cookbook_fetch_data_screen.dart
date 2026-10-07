@@ -1,61 +1,45 @@
-// Parte B da atividade.
-//
-// Ponto de partida: Cookbook "Fetch data from the internet"
-// https://docs.flutter.dev/cookbook/networking/fetch-data
-//
-// A receita original do cookbook busca APENAS um álbum
-// (https://jsonplaceholder.typicode.com/albums/1), converte o JSON em um
-// objeto Dart e mostra o título em um FutureBuilder simples.
-//
-// Modificações feitas em relação ao exemplo original (para estudar o
-// código e demonstrar ao professor):
-//
-//   1. Em vez de buscar 1 álbum, busca a LISTA completa de álbuns
-//      (/albums) e decodifica em uma List<Album> em vez de um único
-//      objeto.
-//   2. Os resultados são exibidos em uma ListView (com Card para cada
-//      item), em vez de um único Text central.
-//   3. Foi adicionado um campo de busca (TextField) que filtra a lista
-//      localmente pelo título, sem precisar de nova requisição.
-//   4. Foi adicionado "pull to refresh" (RefreshIndicator) para repetir
-//      a requisição HTTP.
-//   5. Tratamento de erro melhorado: em caso de falha (ConnectionError,
-//      status != 200, etc.) mostra uma mensagem amigável com um botão
-//      "Tentar novamente", em vez de deixar a tela travada no erro.
+// Baseado no cookbook "Fetch data from the internet" do Flutter.
+// Em vez do exemplo padrão (1 álbum do jsonplaceholder), busco meus
+// próprios repositórios no GitHub e mostro em uma lista com busca.
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class Album {
-  final int id;
-  final int userId;
-  final String title;
+class Repo {
+  final String name;
+  final String? description;
+  final String? language;
+  final int stars;
 
-  const Album({required this.id, required this.userId, required this.title});
+  const Repo({
+    required this.name,
+    required this.description,
+    required this.language,
+    required this.stars,
+  });
 
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      id: json['id'] as int,
-      userId: json['userId'] as int,
-      title: json['title'] as String,
+  factory Repo.fromJson(Map<String, dynamic> json) {
+    return Repo(
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      language: json['language'] as String?,
+      stars: json['stargazers_count'] as int,
     );
   }
 }
 
-Future<List<Album>> fetchAlbums() async {
+Future<List<Repo>> fetchRepos() async {
   final response = await http.get(
-    Uri.parse('https://jsonplaceholder.typicode.com/albums'),
+    Uri.parse('https://api.github.com/users/Deivid021/repos?sort=updated&per_page=6'),
   );
 
   if (response.statusCode == 200) {
     final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
-    return data
-        .map((json) => Album.fromJson(json as Map<String, dynamic>))
-        .toList();
+    return data.map((json) => Repo.fromJson(json as Map<String, dynamic>)).toList();
   } else {
-    throw Exception('Falha ao carregar os álbuns (HTTP ${response.statusCode})');
+    throw Exception('Não foi possível carregar os repositórios');
   }
 }
 
@@ -63,61 +47,48 @@ class CookbookFetchDataScreen extends StatefulWidget {
   const CookbookFetchDataScreen({super.key});
 
   @override
-  State<CookbookFetchDataScreen> createState() =>
-      _CookbookFetchDataScreenState();
+  State<CookbookFetchDataScreen> createState() => _CookbookFetchDataScreenState();
 }
 
 class _CookbookFetchDataScreenState extends State<CookbookFetchDataScreen> {
-  late Future<List<Album>> _futureAlbums;
-  final TextEditingController _searchController = TextEditingController();
+  late Future<List<Repo>> _futureRepos;
   String _query = '';
 
   @override
   void initState() {
     super.initState();
-    _futureAlbums = fetchAlbums();
+    _futureRepos = fetchRepos();
   }
 
   Future<void> _refresh() async {
     setState(() {
-      _futureAlbums = fetchAlbums();
+      _futureRepos = fetchRepos();
     });
-    await _futureAlbums;
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+    await _futureRepos;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Parte B - Cookbook: Fetch Data (modificado)'),
-      ),
+      appBar: AppBar(title: const Text('Meus repositórios no GitHub')),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(
-              controller: _searchController,
               decoration: const InputDecoration(
-                labelText: 'Filtrar por título',
+                labelText: 'Buscar repositório',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
-                setState(() {
-                  _query = value.trim().toLowerCase();
-                });
+                setState(() => _query = value.trim().toLowerCase());
               },
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Album>>(
-              future: _futureAlbums,
+            child: FutureBuilder<List<Repo>>(
+              future: _futureRepos,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -139,32 +110,35 @@ class _CookbookFetchDataScreenState extends State<CookbookFetchDataScreen> {
                   );
                 }
 
-                final albums = snapshot.data ?? const <Album>[];
+                final repos = snapshot.data ?? const <Repo>[];
                 final filtered = _query.isEmpty
-                    ? albums
-                    : albums
-                        .where((a) => a.title.toLowerCase().contains(_query))
-                        .toList();
-
-                if (filtered.isEmpty) {
-                  return const Center(child: Text('Nenhum álbum encontrado.'));
-                }
+                    ? repos
+                    : repos.where((r) => r.name.toLowerCase().contains(_query)).toList();
 
                 return RefreshIndicator(
                   onRefresh: _refresh,
                   child: ListView.builder(
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
-                      final album = filtered[index];
+                      final repo = filtered[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
+                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         child: ListTile(
-                          leading: CircleAvatar(child: Text('${album.id}')),
-                          title: Text(album.title),
-                          subtitle: Text('Usuário ${album.userId}'),
+                          leading: const Icon(Icons.folder),
+                          title: Text(repo.name),
+                          subtitle: Text(repo.description ?? 'Sem descrição'),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (repo.language != null) Text(repo.language!),
+                              Row(
+                                children: [
+                                  const Icon(Icons.star, size: 14, color: Colors.amber),
+                                  Text(' ${repo.stars}'),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

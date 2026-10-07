@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 16),
               FilledButton.icon(
                 icon: const Icon(Icons.cloud_download),
-                label: const Text('Parte B - Cookbook (modificado)'),
+                label: const Text('Parte B - Meus repositórios (GitHub)'),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(

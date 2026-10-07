@@ -1,20 +1,4 @@
-// Parte A da atividade.
-//
-// Implementação do tutorial oficial de layout do Flutter:
-// https://docs.flutter.dev/ui/layout/tutorial
-//
-// O tutorial ensina a montar a tela de detalhes de um "card" (o
-// acampamento do Lago Oeschinen) combinando os widgets básicos de
-// layout: Column, Row, Expanded, Padding, Icon e Text.
-//
-// Estrutura seguida (igual à documentação):
-//  1. Imagem de topo (Image.asset)
-//  2. Bloco de título: nome do lugar + localização + ícone de favorito
-//     com contador (um Row com um Column expandido de um lado e o
-//     ícone/contador do outro)
-//  3. Linha de botões: Call / Route / Share, cada um em uma Column
-//     com Icon + Text, distribuídos com MainAxisAlignment.spaceEvenly
-//  4. Texto de descrição do lugar
+// Tutorial de layout do Flutter (docs.flutter.dev/ui/layout/tutorial)
 
 import 'package:flutter/material.dart';
 
